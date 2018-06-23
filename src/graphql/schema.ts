@@ -1,11 +1,27 @@
 import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
+import resolvers from './resolvers';
 // import mocks from './mocks';
 
 const typeDefs = `type Query {
   testString: String
+  user(id: String): User
+}
+
+type User {
+  # bson ObjectId 
+  id: String
+  platform: String
+  vendor: String
+  product: String
+  # ip address of first visit
+  ip: String
+  # two digit alphabet code
+  countryCode: String
+  # name of the city of first visit
+  city: String
 }`;
 
-const schema = makeExecutableSchema({ typeDefs });
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 // addMockFunctionsToSchema({ schema, mocks });
 
