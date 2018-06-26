@@ -7,8 +7,21 @@ const typeDefs = `type Query {
   user(id: String): User
 }
 
+type UpsertUserPayload {
+  user: User!
+}
+
+type Mutation {
+  upsertUser(
+    id: String
+    platform: String
+    vendor: String
+    product: String
+  ): UpsertUserPayload
+}
+
 type User {
-  # bson ObjectId 
+  # bson ObjectId hex string
   id: String
   platform: String
   vendor: String
