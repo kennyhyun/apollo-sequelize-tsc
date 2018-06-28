@@ -6,16 +6,16 @@ interface UserInput {
   platform: string;
   vendor: string;
   product: string;
-};
+}
 
-const resolvers: {[k:string]:any} = {
+const resolvers: { [k: string]: any } = {
   Query: {
     user: (root: any, { id }: UserInput) => {
       console.log('user resolver', id);
       const user = User.findById(id);
       return user;
       return {
-        id: (new ObjectId()).toString(),
+        id: new ObjectId().toString(),
         platform: 'a platform',
         vendor: 'a vendor',
         product: 'a product',
@@ -23,21 +23,22 @@ const resolvers: {[k:string]:any} = {
         countryCode: 'AU',
         city: 'Sydney',
       };
-    }
+    },
   },
-  User: {
-  },
+  User: {},
   Mutation: {
     upsertUser: async (root: any, { id, platform, vendor, product }: UserInput) => {
       const user = User.build({
         id: new ObjectId().toString(),
-        platform, vendor, product
+        platform,
+        vendor,
+        product,
       });
       await (user as any).save();
       console.log('user resolver', user);
       return { user };
-    }
-  }
+    },
+  },
 };
 
 export default resolvers;
