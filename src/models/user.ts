@@ -2,7 +2,19 @@ import * as Sequelize from 'sequelize';
 
 import { sequelize } from './';
 
-export const User = sequelize.define(
+interface UserAttributes {
+  id: string;
+  platform?: string;
+  vendor?: string;
+  product?: string;
+  ip?: string;
+  countryCode?: string;
+  city?: string;
+}
+
+export type UserModel = Sequelize.Instance<UserAttributes> & UserAttributes;
+
+export const User = sequelize.define<UserModel, UserAttributes>(
   'user',
   {
     id: {

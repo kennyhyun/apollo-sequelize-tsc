@@ -1,5 +1,5 @@
 import { ObjectId } from 'bson';
-import { User } from '../models';
+import { User, UserModel } from '../models';
 
 interface UserInput {
   id: string;
@@ -8,9 +8,9 @@ interface UserInput {
   product: string;
 }
 
-const resolvers: { [k: string]: any } = {
+const resolvers = {
   Query: {
-    user: (root: any, { id }: UserInput) => {
+    user: (root: UserModel, { id }: UserInput) => {
       console.log('user resolver', id);
       const user = User.findById(id);
       return user;
@@ -27,14 +27,14 @@ const resolvers: { [k: string]: any } = {
   },
   User: {},
   Mutation: {
-    upsertUser: async (root: any, { id, platform, vendor, product }: UserInput) => {
+    upsertUser: async (root: UserModel, { id, platform, vendor, product }: UserInput) => {
       const user = User.build({
         id: new ObjectId().toString(),
         platform,
         vendor,
         product,
       });
-      await (user as any).save();
+      await user.save();
       console.log('user resolver', user);
       return { user };
     },
