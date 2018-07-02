@@ -4,6 +4,7 @@ import resolvers from './resolvers';
 
 const typeDefs = `type Query {
   testString: String
+  ip: String
   user(id: String): User
 }
 
@@ -34,7 +35,7 @@ type User {
   city: String
 }`;
 
-const schema = makeExecutableSchema({ typeDefs, resolvers });
+const schema = makeExecutableSchema({ typeDefs, resolvers: resolvers as any });
 
 // addMockFunctionsToSchema({ schema, mocks });
 

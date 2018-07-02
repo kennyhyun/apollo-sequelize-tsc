@@ -1,5 +1,6 @@
 import { ObjectId } from 'bson';
 import { User, UserModel } from '../models';
+import { RootResolvers, Context } from '../types';
 
 interface UserInput {
   id: string;
@@ -10,10 +11,11 @@ interface UserInput {
 
 const resolvers = {
   Query: {
-    user: (root: UserModel, { id }: UserInput) => {
-      console.log('user resolver', id);
+    user: (root: RootResolvers, args: UserInput, context: Context) => {
+      const { id } = args;
       const user = User.findById(id);
       return user;
+      /*
       return {
         id: new ObjectId().toString(),
         platform: 'a platform',
@@ -23,6 +25,7 @@ const resolvers = {
         countryCode: 'AU',
         city: 'Sydney',
       };
+      */
     },
   },
   User: {},

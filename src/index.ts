@@ -1,6 +1,7 @@
 import * as express from 'express';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import * as bodyParser from 'body-parser';
+
 import schema from './graphql/schema';
 import './models';
 import { sequelize } from './models';
@@ -9,8 +10,38 @@ const GRAPHQL_PORT = process.env.PORT || 3000;
 
 const graphQLServer = express();
 
-graphQLServer.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
-graphQLServer.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+const root = {
+  ip: (root, context) => {
+    const { request } = context;
+    return request.ip;
+  },
+};
+
+/*
+function loggingMiddleware(req, res, next) {
+  console.log('middleware ip:', req.ip);
+  next();
+}
+graphQLServer.use(loggingMiddleware);
+*/
+
+graphQLServer.use(
+  '/graphql',
+  bodyParser.json(),
+  graphqlExpress(request => ({
+      schema,
+      rootValue: root,
+      context: {
+        request
+      }
+    })
+  )
+);
+
+graphQLServer.use(
+  '/graphiql',
+  graphiqlExpress({ endpointURL: '/graphql' })
+);
 
 (async () => {
   try {
@@ -22,3 +53,4 @@ graphQLServer.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
     console.error(err);
   }
 })();
+
