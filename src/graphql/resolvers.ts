@@ -1,4 +1,6 @@
 import { ObjectId } from 'bson';
+import * as geoip from 'geoip-country-only';
+import * as IP from 'ip';
 import { User, UserModel } from '../models';
 import { RootResolvers, Context } from '../types';
 
@@ -8,6 +10,8 @@ interface UserInput {
   vendor: string;
   product: string;
 }
+
+const { SERVER_IP_ADDR } = process.env;
 
 const resolvers = {
   Query: {
@@ -19,8 +23,25 @@ const resolvers = {
   },
   User: {},
   Mutation: {
-    upsertUser: async (root: UserModel, { id, platform, vendor, product }: UserInput) => {
-      const modifier = { platform, vendor, product };
+    upsertUser: async (
+      root: UserModel,
+      { id, platform, vendor, product }: UserInput,
+      context: Context
+    ) => {
+      let {
+        request: { ip },
+      } = context;
+      if (IP.isPrivate(ip) && SERVER_IP_ADDR) {
+        ip = SERVER_IP_ADDR;
+      }
+      const { country } = geoip.lookup(ip) || ({} as any);
+
+      const modifier = {
+        platform,
+        vendor,
+        product,
+        countryCode: country,
+      };
 
       if (id) {
         const [cnt] = await User.update(modifier, { where: { id } });
@@ -34,7 +55,7 @@ const resolvers = {
           ...modifier,
         });
         await user.save();
-        console.log('created user', user);
+        // console.log('created user', user);
         return { user };
       }
     },
