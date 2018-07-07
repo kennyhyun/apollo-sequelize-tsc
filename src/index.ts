@@ -29,19 +29,15 @@ graphQLServer.use(
   '/graphql',
   bodyParser.json(),
   graphqlExpress(request => ({
-      schema,
-      rootValue: root,
-      context: {
-        request
-      }
-    })
-  )
+    schema,
+    rootValue: root,
+    context: {
+      request,
+    },
+  }))
 );
 
-graphQLServer.use(
-  '/graphiql',
-  graphiqlExpress({ endpointURL: '/graphql' })
-);
+graphQLServer.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 (async () => {
   try {
@@ -53,4 +49,3 @@ graphQLServer.use(
     console.error(err);
   }
 })();
-

@@ -20,14 +20,10 @@ const resolvers = {
   User: {},
   Mutation: {
     upsertUser: async (root: UserModel, { id, platform, vendor, product }: UserInput) => {
-      const modifier = {
-        platform,
-        vendor,
-        product,
-      };
+      const modifier = { platform, vendor, product };
 
       if (id) {
-        const [ cnt ] = await User.update(modifier, { where: { id } });
+        const [cnt] = await User.update(modifier, { where: { id } });
         if (cnt < 1) {
           throw new Error(`Could not update user ${id}`);
         }

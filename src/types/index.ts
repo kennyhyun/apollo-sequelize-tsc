@@ -5,5 +5,5 @@ export interface RootResolvers {
 }
 
 export interface Context {
-  request: any
+  request: any;
 }
