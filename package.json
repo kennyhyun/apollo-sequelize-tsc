@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "concurrently --kill-others \"tsc -w\" \"nodemon build/index.js\"",
     "build": "tsc",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "precommit": "lint-staged"
   },
   "author": "",
   "license": "MIT",
@@ -37,5 +38,13 @@
     "prettier": "^1.13.7",
     "tslint": "^5.10.0",
     "typescript": "^2.9.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js}": ["prettier --print-width 100 --single-quote --trailing-comma es5 --write", "git add"]
   }
 }
