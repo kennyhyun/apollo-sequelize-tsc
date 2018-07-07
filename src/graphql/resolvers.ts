@@ -15,31 +15,32 @@ const resolvers = {
       const { id } = args;
       const user = User.findById(id);
       return user;
-      /*
-      return {
-        id: new ObjectId().toString(),
-        platform: 'a platform',
-        vendor: 'a vendor',
-        product: 'a product',
-        ip: '0.0.0.0',
-        countryCode: 'AU',
-        city: 'Sydney',
-      };
-      */
     },
   },
   User: {},
   Mutation: {
     upsertUser: async (root: UserModel, { id, platform, vendor, product }: UserInput) => {
-      const user = User.build({
-        id: new ObjectId().toString(),
+      const modifier = {
         platform,
         vendor,
         product,
-      });
-      await user.save();
-      console.log('user resolver', user);
-      return { user };
+      };
+
+      if (id) {
+        const [ cnt ] = await User.update(modifier, { where: { id } });
+        if (cnt < 1) {
+          throw new Error(`Could not update user ${id}`);
+        }
+        return { user: await User.findById(id) };
+      } else {
+        const user = User.build({
+          id: new ObjectId().toString(),
+          ...modifier,
+        });
+        await user.save();
+        console.log('created user', user);
+        return { user };
+      }
     },
   },
 };
